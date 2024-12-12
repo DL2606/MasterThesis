@@ -8,6 +8,7 @@ const ajaxCall = (apiKey, prompt) => {
         model: "gpt-3.5-turbo", // Use a supported model
         messages: [{ role: "user", content: prompt }], // Updated format for chat models
         max_tokens: 100,
+        n: 1,
         temperature: 0.5,
       }),
       headers: {
