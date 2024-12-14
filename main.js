@@ -1,15 +1,15 @@
-const ajaxCall = (apiKey, prompt) => {
+const ajaxCall = (apiKey, messages) => {
   return new Promise((resolve, reject) => {
     $.ajax({
       url: "https://api.openai.com/v1/chat/completions",
       type: "POST",
       dataType: "json",
       data: JSON.stringify({
-        model: "gpt-3.5-turbo", // Use a supported model
-        messages: [{ role: "user", content: prompt }], // Updated format for chat models
-        max_tokens: 100,
-        n: 1,
-        temperature: 0.5,
+        model: "gpt-3.5-turbo", // Ensure you're using the supported model
+        messages: messages,    // Pass the dynamically constructed messages array
+        max_tokens: 200,       // Increase tokens for more detailed responses
+        n: 1,                  // Single response
+        temperature: 0.8,      // Adjust for creativity (higher values for variability)
       }),
       headers: {
         "Content-Type": "application/json",
@@ -58,7 +58,14 @@ const ajaxCall = (apiKey, prompt) => {
       const rootElement = this.shadowRoot.getElementById("root");
       try {
         rootElement.textContent = "Processing...";
-        const response = await ajaxCall(apiKey, prompt);
+
+        // Build dynamic messages array for conversational context
+        const messages = [
+          { role: "system", content: "You are an assistant who provides helpful and detailed responses." },
+          { role: "user", content: prompt },
+        ];
+
+        const response = await ajaxCall(apiKey, messages);
 
         // Extract response text for chat models
         const text = response.choices?.[0]?.message?.content || "No response available.";
