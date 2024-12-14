@@ -1,22 +1,28 @@
-const ajaxCall = (apiKey, messages) => {
+const ajaxCall = (apiKey, prompt) => {
   return new Promise((resolve, reject) => {
     $.ajax({
       url: "https://api.openai.com/v1/chat/completions",
       type: "POST",
       dataType: "json",
       data: JSON.stringify({
-        model: "gpt-3.5-turbo", // Ensure you're using the supported model
-        messages: messages,    // Pass the dynamically constructed messages array
-        max_tokens: 200,       // Increase tokens for more detailed responses
-        n: 1,                  // Single response
-        temperature: 0.8,      // Adjust for creativity (higher values for variability)
+        model: "gpt-3.5-turbo",
+        messages: [{ role: "user", content: prompt }],
+        max_tokens: 500,
+        n: 1,
+        temperature: 0.8,
       }),
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${apiKey}`,
       },
       success: function (response) {
-        resolve(response);
+        console.log("API Response Received:", response); // Debug the response
+        if (!response || !response.choices || !response.choices[0]) {
+          console.error("Unexpected API response format:", response);
+          resolve({ choices: [{ message: { content: "Invalid response received." } }] });
+        } else {
+          resolve(response);
+        }
       },
       error: function (xhr, status, error) {
         const err = new Error(`XHR Error: ${error}`);
@@ -58,23 +64,14 @@ const ajaxCall = (apiKey, messages) => {
       const rootElement = this.shadowRoot.getElementById("root");
       try {
         rootElement.textContent = "Processing...";
+        const response = await ajaxCall(apiKey, prompt);
+        console.log("Full API Response:", response);
 
-        // Build dynamic messages array for conversational context
-        const messages = [
-          { role: "system", content: "You are an assistant who provides helpful and detailed responses." },
-          { role: "user", content: prompt },
-        ];
-
-        const response = await ajaxCall(apiKey, messages);
-
-        // Extract response text for chat models
-        const text = response.choices?.[0]?.message?.content || "No response available.";
+        const text = response.choices?.[0]?.message?.content || "No valid response received.";
         rootElement.textContent = text.trim();
         return text.trim();
       } catch (error) {
         console.error("Error during API call:", error);
-
-        // Display error message
         let errorMessage = "Error occurred while processing the request.";
         if (error.status === 429) {
           errorMessage = "Rate limit exceeded. Please try again later.";
@@ -83,7 +80,6 @@ const ajaxCall = (apiKey, messages) => {
         } else if (error.response) {
           errorMessage = `Error: ${error.response}`;
         }
-
         rootElement.textContent = errorMessage;
         throw error;
       }
