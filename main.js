@@ -10,11 +10,11 @@ const ajaxCall = (apiKey, prompt) => {
       type: "POST",
       dataType: "json",
       data: JSON.stringify({
-        model: "gpt-3.5-turbo",
+        model: "gpt-4",
         messages: [{ role: "user", content: dynamicPrompt }],
-        max_tokens: 500,
+        max_tokens: 1000,
         n: 1,
-        temperature: 0.8,
+        temperature: 0.7,
       }),
       headers: {
         "Content-Type": "application/json",
