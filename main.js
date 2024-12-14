@@ -1,12 +1,17 @@
 const ajaxCall = (apiKey, prompt) => {
   return new Promise((resolve, reject) => {
+    const timestamp = new Date().toISOString(); // Add timestamp for variability
+    const dynamicPrompt = `${prompt}\n\nTimestamp: ${timestamp}`; // Combine prompt with dynamic content
+
+    console.log("Sending Prompt to API:", dynamicPrompt); // Log prompt before sending
+
     $.ajax({
       url: "https://api.openai.com/v1/chat/completions",
       type: "POST",
       dataType: "json",
       data: JSON.stringify({
         model: "gpt-3.5-turbo",
-        messages: [{ role: "user", content: prompt }],
+        messages: [{ role: "user", content: dynamicPrompt }],
         max_tokens: 500,
         n: 1,
         temperature: 0.8,
@@ -16,13 +21,14 @@ const ajaxCall = (apiKey, prompt) => {
         Authorization: `Bearer ${apiKey}`,
       },
       success: function (response) {
-        console.log("API Response Received:", response); // Debug the response
+        console.log("Full API Response Received:", response); // Debug the response
+
         if (!response || !response.choices || !response.choices[0]) {
           console.error("Unexpected API response format:", response);
-          resolve({ choices: [{ message: { content: "Invalid response received." } }] });
-        } else {
-          resolve(response);
+          throw new Error("Unexpected API response format.");
         }
+
+        resolve(response);
       },
       error: function (xhr, status, error) {
         const err = new Error(`XHR Error: ${error}`);
@@ -34,7 +40,7 @@ const ajaxCall = (apiKey, prompt) => {
   });
 };
 
-(function () {
+(async function () {
   const template = document.createElement("template");
   template.innerHTML = `
     <style>
@@ -64,8 +70,9 @@ const ajaxCall = (apiKey, prompt) => {
       const rootElement = this.shadowRoot.getElementById("root");
       try {
         rootElement.textContent = "Processing...";
+        console.log("Received Prompt from SAC:", prompt); // Debug prompt received from SAC
+
         const response = await ajaxCall(apiKey, prompt);
-        console.log("Full API Response:", response);
 
         const text = response.choices?.[0]?.message?.content || "No valid response received.";
         rootElement.textContent = text.trim();
