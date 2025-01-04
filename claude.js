@@ -22,7 +22,7 @@ const ajaxCall = (apiKey, prompt) => {
       }),
       headers: {
         "Content-Type": "application/json",
-        "x-api-key": apiKey,
+        "anthropic-api-key": apiKey,
         "anthropic-version": "2024-01-01"
       },
       success: function (response) {
