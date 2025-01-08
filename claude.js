@@ -2,15 +2,13 @@ const ajaxCall = (apiKey, prompt) => {
   return new Promise((resolve, reject) => {
     const timestamp = new Date().toISOString();
     const dynamicPrompt = `${prompt}\n\nTimestamp: ${timestamp}`;
-
     console.log("Sending Prompt to API:", dynamicPrompt);
-
     $.ajax({
       url: "https://api.anthropic.com/v1/messages",
       type: "POST",
       dataType: "json",
       data: JSON.stringify({
-        model: "claude-3-5-sonnet-20241022",
+        model: "claude-3-sonnet-20240229",
         max_tokens: 500,
         messages: [
           {
@@ -22,17 +20,15 @@ const ajaxCall = (apiKey, prompt) => {
       }),
       headers: {
         "Content-Type": "application/json",
-        "x-anthropic-api-key": apiKey,
+        "anthropic-api-key": apiKey,  // Updated header name
         "anthropic-version": "2024-01-01"
       },
       success: function (response) {
         console.log("Full API Response Received:", response);
-
-        if (!response || !response.content || !response.content[0]) {
+        if (!response || !response.content) {
           console.error("Unexpected API response format:", response);
           throw new Error("Unexpected API response format.");
         }
-
         resolve(response);
       },
       error: function (xhr, status, error) {
@@ -76,15 +72,16 @@ const ajaxCall = (apiKey, prompt) => {
       try {
         rootElement.textContent = "Processing...";
         console.log("Received Prompt from SAC:", prompt);
-
         const response = await ajaxCall(apiKey, prompt);
-
-        const text = response.content[0]?.text || "No valid response received.";
+        
+        // Updated to handle the new response format
+        const text = response.content || "No valid response received.";
         rootElement.textContent = text.trim();
         return text.trim();
       } catch (error) {
         console.error("Error during API call:", error);
         let errorMessage = "Error occurred while processing the request.";
+        
         if (error.status === 429) {
           errorMessage = "Rate limit exceeded. Please try again later.";
         } else if (error.status === 401) {
@@ -92,13 +89,14 @@ const ajaxCall = (apiKey, prompt) => {
         } else if (error.response) {
           errorMessage = `Error: ${error.response}`;
         }
+        
         rootElement.textContent = errorMessage;
         throw error;
       }
     }
 
     connectedCallback() {
-      this.shadowRoot.getElementById("root").textContent = "Claude 3.5 Sonnet Widget Ready.";
+      this.shadowRoot.getElementById("root").textContent = "Claude 3 Sonnet Widget Ready.";
     }
   }
 
