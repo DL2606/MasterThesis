@@ -1,21 +1,12 @@
 import Anthropic from '@anthropic-ai/sdk';
 
-const ajaxCall = async (apiKey, prompt) => {
-  const anthropic = new Anthropic({
-    apiKey: apiKey, // Use the passed apiKey
-  });
+const anthropic = new Anthropic({
+  apiKey: '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', // defaults to process.env["ANTHROPIC_API_KEY"]
+});
 
-  try {
-    const msg = await anthropic.messages.create({
-      model: "claude-3-5-sonnet-20241022",
-      max_tokens: 10000,
-      messages: [{ role: "user", content: prompt }], // Use the passed prompt
-    });
-
-    console.log(msg);
-    return msg; // Return the response
-  } catch (error) {
-    console.error("Error while making API call:", error);
-    throw error; // Re-throw the error for the caller to handle
-  }
-};
+const msg = await anthropic.messages.create({
+  model: "claude-3-5-sonnet-20241022",
+  max_tokens: 1024,
+  messages: [{ role: "user", content: "Hello, Claude" }],
+});
+console.log(msg);
