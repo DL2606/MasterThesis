@@ -9,7 +9,7 @@ const ajaxCall = (apiKey, prompt) => {
       dataType: "json",
       data: JSON.stringify({
         model: "claude-3-sonnet-20240229",
-        max_tokens: 500,
+        max_tokens: 10000,
         messages: [
           {
             role: "user",
