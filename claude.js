@@ -1,4 +1,4 @@
-const ajaxCall = (apiKey, prompt) => {
+const anthroAjaxCall  = (apiKey, prompt) => {
   return new Promise((resolve, reject) => {
     const timestamp = new Date().toISOString(); // Add timestamp for variability
     const dynamicPrompt = `${prompt}\n\nTimestamp: ${timestamp}`; // Combine prompt with dynamic content
@@ -71,7 +71,7 @@ const ajaxCall = (apiKey, prompt) => {
         rootElement.textContent = "Processing...";
         console.log("Received Prompt from SAC:", prompt); // Debug prompt received from SAC
 
-        const response = await ajaxCall(apiKey, prompt);
+        const response = await anthroAjaxCall (apiKey, prompt);
 
         const text = response.completion || "No valid response received.";
         rootElement.textContent = text.trim();
