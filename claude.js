@@ -6,7 +6,7 @@ const anthroAjaxCall  = (apiKey, prompt) => {
     console.log("Sending Prompt to API:", dynamicPrompt); // Log prompt before sending
 
     $.ajax({
-      url: "https://api.anthropic.com/v1/complete", // Anthropic API endpoint
+      url: "https://api.anthropic.com/v1/messages", // Anthropic API endpoint
       type: "POST",
       dataType: "json",
       data: JSON.stringify({
