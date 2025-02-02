@@ -1,32 +1,34 @@
-const anthroAjaxCall  = (apiKey, prompt) => {
+const ajaxCall = (apiKey, prompt) => {
   return new Promise((resolve, reject) => {
-    const timestamp = new Date().toISOString(); // Add timestamp for variability
-    const dynamicPrompt = `${prompt}\n\nTimestamp: ${timestamp}`; // Combine prompt with dynamic content
-
-    console.log("Sending Prompt to API:", dynamicPrompt); // Log prompt before sending
-
+    const timestamp = new Date().toISOString();
+    const dynamicPrompt = `${prompt}\n\nTimestamp: ${timestamp}`;
+    console.log("Sending Prompt to Claude API:", dynamicPrompt);
+    
     $.ajax({
-      url: "https://api.anthropic.com/v1/messages", // Anthropic API endpoint
+      url: "https://api.anthropic.com/v1/messages",
       type: "POST",
       dataType: "json",
       data: JSON.stringify({
-        model: "claude-3-5-sonnet-20241022", // Adjust model name
-        prompt: dynamicPrompt, // Single string prompt
-        max_tokens_to_sample: 5000, // Adjusted parameter name
-        temperature: 0.7,
+        model: "claude-3-5-sonnet-20241022",
+        messages: [{
+          role: "user",
+          content: dynamicPrompt
+        }],
+        max_tokens: 1000,
+        temperature: 0.1,
       }),
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`, // Anthropic API key
+        "anthropic-version": "2023-06-01",
+        "anthropic-beta": "messages-2024-01-01",
+        "x-api-key": apiKey
       },
       success: function (response) {
-        console.log("Full API Response Received:", response); // Debug the response
-
-        if (!response || !response.completion) {
+        console.log("Full API Response Received:", response);
+        if (!response || !response.content || !response.content[0] || !response.content[0].text) {
           console.error("Unexpected API response format:", response);
           throw new Error("Unexpected API response format.");
         }
-
         resolve(response);
       },
       error: function (xhr, status, error) {
@@ -69,16 +71,15 @@ const anthroAjaxCall  = (apiKey, prompt) => {
       const rootElement = this.shadowRoot.getElementById("root");
       try {
         rootElement.textContent = "Processing...";
-        console.log("Received Prompt from SAC:", prompt); // Debug prompt received from SAC
-
-        const response = await anthroAjaxCall (apiKey, prompt);
-
-        const text = response.completion || "No valid response received.";
+        console.log("Received Prompt from SAC:", prompt);
+        const response = await ajaxCall(apiKey, prompt);
+        const text = response.content[0].text || "No valid response received.";
         rootElement.textContent = text.trim();
         return text.trim();
       } catch (error) {
         console.error("Error during API call:", error);
         let errorMessage = "Error occurred while processing the request.";
+        
         if (error.status === 429) {
           errorMessage = "Rate limit exceeded. Please try again later.";
         } else if (error.status === 401) {
@@ -86,6 +87,7 @@ const anthroAjaxCall  = (apiKey, prompt) => {
         } else if (error.response) {
           errorMessage = `Error: ${error.response}`;
         }
+        
         rootElement.textContent = errorMessage;
         throw error;
       }
