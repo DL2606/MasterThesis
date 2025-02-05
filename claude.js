@@ -1,4 +1,4 @@
-const ajaxCall = (apiKey, prompt) => {
+const ajaxCallClaude = (apiKey, prompt) => {
   return new Promise((resolve, reject) => {
     // Validate API key before making the call
     if (!apiKey || apiKey.trim() === '') {
