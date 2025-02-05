@@ -9,33 +9,41 @@ const ajaxCallClaude = (APIKey, endpoint, promptClaude) => {
       return;
     }
 
-    $.ajax({
-      url: endpoint,
-      type: "POST",
-      processData: false,
-      contentType: "application/json",
-      dangerouslyAllowBrowser: true,
-      "anthropic-dangerous-direct-browser-access": "true",
-      dataType: "json",
-      data: JSON.stringify({
+    fetch(endpoint, {
+      method: "POST",
+      headers: {
+        "x-api-key": APIKey,
+        "anthropic-version": "2023-06-01",
+        "content-type": "application/json",
+        "anthropic-dangerous-direct-browser-access": "true"
+      },
+      body: JSON.stringify({
         model: "claude-3-5-sonnet-20241022",
-        messages: [{ role: "user", content: promptClaude }],
         max_tokens: 1000,
         temperature: 0.1,
-      }),
-      success: function (response) {
-        console.log("✅ API Response:", response);
-        resolve(response);
-      },
-      error: function (xhr, status, error) {
-        console.error("❌ API Request Failed!", {
-          status: xhr.status,
-          statusText: xhr.statusText,
-          responseText: xhr.responseText,
-          error: error
-        });
-        reject(error);
-      },
+        messages: [
+          {
+            role: "user",
+            content: [
+              { type: "text", text: promptClaude }
+            ]
+          }
+        ]
+      })
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return response.json();
+    })
+    .then(response => {
+      console.log("✅ API Response:", response);
+      resolve(response);
+    })
+    .catch(error => {
+      console.error("❌ API Request Failed!", error);
+      reject(error);
     });
   });
 };
@@ -45,7 +53,6 @@ class MainWebComponent extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: "open" });
-
     const rootElement = document.createElement("div");
     rootElement.id = "root";
     rootElement.textContent = "Claude Widget Ready!";
@@ -57,11 +64,8 @@ class MainWebComponent extends HTMLElement {
     try {
       rootElement.textContent = "Processing...";
       console.log("📩 Received promptClaude from SAC:", promptClaude);
-
-      // Use ajaxCallClaude (not ajaxCall)
-      const response = await ajaxCallClaude(APIKey, promptClaude);
-      const text = response.content || "No valid response received.";
-
+      const response = await ajaxCallClaude(APIKey, "https://api.anthropic.com/v1/messages", promptClaude);
+      const text = response.content[0].text || "No valid response received.";
       rootElement.textContent = text.trim();
       return text.trim();
     } catch (error) {
