@@ -1,11 +1,11 @@
 console.log("Using ajaxCall for Anthropic API");
 
-const ajaxCallClaude = (apiKey, prompt) => {
-  console.log("API Key:", apiKey);
-  console.log("Prompt BEFORE API Call:", prompt);
+const ajaxCallClaude = (APIKey, promptAnthropic) => {
+  console.log("API Key:", APIKey);
+  console.log("promptAnthropic BEFORE API Call:", promptAnthropic);
 
   return new Promise((resolve, reject) => {
-    if (!apiKey || apiKey.trim() === '') {
+    if (!APIKey || APIKey.trim() === '') {
       reject(new Error('API Key is missing or empty'));
       return;
     }
@@ -20,7 +20,7 @@ const ajaxCallClaude = (apiKey, prompt) => {
       dataType: "json",
       data: JSON.stringify({
         model: "claude-3-5-sonnet-20241022",
-        messages: [{ role: "user", content: prompt }],
+        messages: [{ role: "user", content: promptAnthropic }],
         max_tokens: 1000,
         temperature: 0.1,
       }),
