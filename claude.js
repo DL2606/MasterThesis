@@ -1,5 +1,5 @@
 console.log("Using ajaxCall for Anthropic API")
-const ajaxCallClaude = (apiKey, prompt) => {
+const ajaxCallClaude = (apiKey, endpoint, prompt) => {
   return new Promise((resolve, reject) => {
     // Validate API key before making the call
     if (!apiKey || apiKey.trim() === '') {
@@ -8,7 +8,7 @@ const ajaxCallClaude = (apiKey, prompt) => {
     }
 
     $.ajax({
-      url: "https://api.anthropic.com/v1/messages",
+      url: endpoint,
           type: "POST",
           processData: false, // Prevent jQuery from processing data
           contentType: "application/json",
