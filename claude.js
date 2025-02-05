@@ -1,3 +1,4 @@
+console.log("Using ajaxCall for Anthropic API")
 const ajaxCallClaude = (apiKey, prompt) => {
   return new Promise((resolve, reject) => {
     // Validate API key before making the call
