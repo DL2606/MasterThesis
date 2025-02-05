@@ -1,7 +1,7 @@
 console.log("✅ Loaded claude.js");
 
 // Define the AJAX function for Anthropic
-const ajaxCallClaude = (APIKey, promptClaude) => {
+const ajaxCallClaude = (APIKey, endpoint, promptClaude) => {
   console.log("📡 Sending API Request to Anthropic...");
   return new Promise((resolve, reject) => {
     if (!APIKey || APIKey.trim() === '') {
@@ -10,7 +10,7 @@ const ajaxCallClaude = (APIKey, promptClaude) => {
     }
 
     $.ajax({
-      url: "https://api.anthropic.com/v1/messages",
+      url: endpoint,
       type: "POST",
       processData: false,
       contentType: "application/json",
