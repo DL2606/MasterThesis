@@ -1,10 +1,10 @@
 console.log("✅ Loaded claude.js");
 
 // Define the AJAX function for Anthropic
-const ajaxCallClaude = (apiKey, prompt) => {
+const ajaxCallClaude = (APIKey, promptClaude) => {
   console.log("📡 Sending API Request to Anthropic...");
   return new Promise((resolve, reject) => {
-    if (!apiKey || apiKey.trim() === '') {
+    if (!APIKey || APIKey.trim() === '') {
       reject(new Error('🚨 API Key is missing or empty'));
       return;
     }
@@ -17,7 +17,7 @@ const ajaxCallClaude = (apiKey, prompt) => {
       dataType: "json",
       data: JSON.stringify({
         model: "claude-3-5-sonnet-20241022",
-        messages: [{ role: "user", content: prompt }],
+        messages: [{ role: "user", content: promptClaude }],
         max_tokens: 1000,
         temperature: 0.1,
       }),
@@ -50,14 +50,14 @@ class MainWebComponent extends HTMLElement {
     this.shadowRoot.appendChild(rootElement);
   }
 
-  async post(apiKey, prompt) {
+  async post(APIKey, promptClaude) {
     const rootElement = this.shadowRoot.getElementById("root");
     try {
       rootElement.textContent = "Processing...";
-      console.log("📩 Received Prompt from SAC:", prompt);
+      console.log("📩 Received promptClaude from SAC:", promptClaude);
 
       // Use ajaxCallClaude (not ajaxCall)
-      const response = await ajaxCallClaude(apiKey, prompt);
+      const response = await ajaxCallClaude(APIKey, promptClaude);
       const text = response.content || "No valid response received.";
 
       rootElement.textContent = text.trim();
