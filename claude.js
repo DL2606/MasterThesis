@@ -15,6 +15,7 @@ const ajaxCallClaude = (APIKey, endpoint, promptClaude) => {
       processData: false,
       contentType: "application/json",
       dangerouslyAllowBrowser: true,
+      "anthropic-dangerous-direct-browser-access": "true",
       dataType: "json",
       data: JSON.stringify({
         model: "claude-3-5-sonnet-20241022",
