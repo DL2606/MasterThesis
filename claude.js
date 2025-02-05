@@ -14,7 +14,7 @@ const ajaxCallClaude = (APIKey, promptClaude) => {
       type: "POST",
       processData: false,
       contentType: "application/json",
-      "anthropic-dangerous-direct-browser-access": "true",
+      anthropic-dangerous-direct-browser-access: true
       dataType: "json",
       data: JSON.stringify({
         model: "claude-3-5-sonnet-20241022",
