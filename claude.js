@@ -10,7 +10,7 @@ const ajaxCallClaude = (APIKey, promptClaude) => {
     }
 
     $.ajax({
-      url: "https://api.anthropic.com/v1/messages",
+      url: "https://cors-anywhere.herokuapp.com/https://api.anthropic.com/v1/messages",
       type: "POST",
       processData: false,
       contentType: "application/json",
