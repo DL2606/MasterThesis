@@ -10,11 +10,12 @@ const ajaxCallClaude = (APIKey, promptClaude) => {
     }
 
     $.ajax({
-      url: "https://cors-anywhere.herokuapp.com/https://api.anthropic.com/v1/messages",
+      url: "https://api.anthropic.com/v1/messages",
       type: "POST",
       processData: false,
       contentType: "application/json",
-      anthropic-dangerous-direct-browser-access: true
+      anthropic-dangerous-direct-browser-access: true,
+      dangerouslyAllowBrowser: true,
       dataType: "json",
       data: JSON.stringify({
         model: "claude-3-5-sonnet-20241022",
