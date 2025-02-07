@@ -14,7 +14,7 @@ const ajaxCall = (apiKey, prompt) => {
         messages: [{ role: "user", content: dynamicPrompt }],
         max_tokens: 1000,
         n: 1,
-        temperature: 0.1,
+        temperature: 0.01,
       }),
       headers: {
         "Content-Type": "application/json",
