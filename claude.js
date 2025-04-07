@@ -18,7 +18,7 @@ const ajaxCallClaude = (APIKey, endpoint, promptClaude) => {
         "anthropic-dangerous-direct-browser-access": "true"
       },
       body: JSON.stringify({
-        model: "claude-3-5-haiku-20241022",
+        model: "claude-3-5-sonnet-20241022",
         max_tokens: 1000,
         temperature: 0.1,
         messages: [
